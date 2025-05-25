@@ -15,6 +15,10 @@ def extract_data():
         raise Exception("Failed to fetch data")
 
 if __name__ == "__main__":
-    data = extract_data()
-    # ✅ This line makes sure raw_data.json gets valid content
-    print(json.dumps(data))
+    try:
+        data = extract_data()
+        # ✅ Print valid JSON so it gets saved into raw_data.json
+        print(json.dumps(data))
+    except Exception as e:
+        logging.error(str(e))
+        print("[]")  # Return an empty JSON list to prevent crash
