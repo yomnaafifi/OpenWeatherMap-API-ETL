@@ -27,3 +27,6 @@ jobs:
         run: |
           python extract.py > raw_data.json
           python -c "import json, transform, extract; df=transform.transform_data(json.load(open('raw_data.json'))); import load; load.load_data(df)"
+      
+      - name: Check Extracted Data
+        run: cat raw_data.json || echo "raw_data.json not found"
