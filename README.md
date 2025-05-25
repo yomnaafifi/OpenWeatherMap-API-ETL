@@ -70,9 +70,9 @@ graph LR
 
 ## Customize
 
-- **Change target city:** Edit `src/extract.py`.
-- **Modify transformations:** Edit `src/transform.py`.
-- **Adjust schedule:** Edit `.github/workflows/etl.yml`.
+- **Change target city:** Edit `extract.py`.
+- **Modify transformations:** Edit `tests/*.py`.
+- **Adjust schedule:** Edit `.github/workflows/etl_pipeline.yml`.
 
 ---
 
