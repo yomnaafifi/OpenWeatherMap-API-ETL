@@ -1,24 +1,38 @@
 import requests
 import logging
-import json
+import os
+from dotenv import load_dotenv
 
-logging.basicConfig(filename='etl.log', level=logging.INFO)
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
 
-def extract_data():
-    url = "https://restcountries.com/v3.1/all"
-    response = requests.get(url)
-    if response.status_code == 200:
-        logging.info("Data extracted successfully")
+def fetch_weather_data(city="London"):
+    """
+    Fetch weather data from OpenWeatherMap API
+    """
+    load_dotenv()
+    api_key = os.getenv("OPENWEATHER_API_KEY")
+    if not api_key:
+        logger.error("OPENWEATHER_API_KEY not found in environment variables")
+        raise ValueError("API key missing")
+    
+    url = f"http://api.openweathermap.org/data/2.5/weather?q={city}&appid={api_key}&units=metric"
+    
+    try:
+        logger.info(f"Fetching weather data for {city}")
+        response = requests.get(url)
+        response.raise_for_status()  # Raises an HTTPError for bad responses
+        logger.info("Successfully fetched weather data")
         return response.json()
-    else:
-        logging.error(f"API Request Failed: {response.status_code}")
-        raise Exception("Failed to fetch data")
+    except requests.exceptions.RequestException as e:
+        logger.error(f"Error fetching weather data: {e}")
+        raise
 
 if __name__ == "__main__":
-    try:
-        data = extract_data()
-        # ✅ Print valid JSON so it gets saved into raw_data.json
-        print(json.dumps(data))
-    except Exception as e:
-        logging.error(str(e))
-        print("[]")  # Return an empty JSON list to prevent crash
+    # For testing the extraction locally
+    data = fetch_weather_data()
+    print(data)
