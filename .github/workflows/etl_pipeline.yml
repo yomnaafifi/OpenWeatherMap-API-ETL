@@ -1,0 +1,29 @@
+name: Daily ETL Pipeline
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # Runs daily at midnight UTC
+  workflow_dispatch:     # Optional manual trigger
+
+jobs:
+  etl:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run Tests
+        run: pytest test_etl.py
+
+      - name: Run ETL Pipeline
+        run: |
+          python extract.py > raw_data.json
+          python -c "import json, transform, extract; df=transform.transform_data(json.load(open('raw_data.json'))); import load; load.load_data(df)"
